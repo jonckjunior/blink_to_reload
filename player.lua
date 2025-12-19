@@ -12,7 +12,7 @@ function player:new()
         aim_y = 64,
         has_ammo = true,
         reload_t = 0,
-        reload_max_t = 15, -- 0.5s, number of frames
+        reload_max_t = 30, -- 1s, number of frames
         cooldown_t = 0,
         cooldown_max_t = 30, -- 1s, number of frames
         max_dash_length = 50,

@@ -67,3 +67,47 @@ function pattern:draw()
         end
     end
 end
+
+function pattern.from_attacks(...)
+    local args = { ... }
+    local attacks = {}
+    for attack_list in all(args) do
+        for attack in all(attack_list) do
+            add(attacks, attack)
+        end
+    end
+    return pattern:new(attacks)
+end
+
+function offset_attacks(attack_list, offset_frames)
+    for attack in all(attack_list) do
+        attack.start_t += offset_frames
+    end
+    return attack_list
+end
+
+function sweep_attacks(direction, width)
+    local attacks = nil
+    if direction == "bottom_up" then
+        attacks = create_bottom_up_horizontal_attack(width)
+    elseif direction == "top_down" then
+        attacks = create_top_down_horizontal_attack(width)
+    elseif direction == "left_right" then
+        attacks = create_left_right_vertical_attack(width)
+    elseif direction == "right_left" then
+        attacks = create_right_left_vertical_attack(width)
+    end
+    assert(attacks != nil)
+    return attacks
+end
+
+-- example: expanding_rings_attacks(b.x, b.y, 10, 5, 10, 30, 45)
+function expanding_rings_attacks(center_x, center_y, start_r, count, r_increment, delay_between, active_t)
+    local attacks = {}
+    local current_r = start_r
+    for i = 1, count do
+        add(attacks, ring_attack:new(center_x, center_y, current_r, (i - 1) * delay_between, active_t))
+        current_r += r_increment
+    end
+    return attacks
+end
