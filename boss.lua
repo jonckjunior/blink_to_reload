@@ -9,16 +9,16 @@ function boss:new()
         hp = 3,
         patterns = {
             function()
-                return create_bottom_up_horizontal_attack(32)
+                return create_bottom_up_horizontal_attack(16)
             end,
             function()
-                return create_left_right_vertical_attack(32)
+                return create_left_right_vertical_attack(16)
             end,
             function()
-                return create_top_down_horizontal_attack(32)
+                return create_top_down_horizontal_attack(16)
             end,
             function()
-                return create_right_left_vertical_attack(32)
+                return create_right_left_vertical_attack(16)
             end
         },
         current_pattern = nil,

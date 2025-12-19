@@ -75,6 +75,7 @@ function draw_crosshair()
         local yn = dy / length
         local step = 10
         length = max(length, world.player.min_dash_length)
+        length = min(length, world.player.max_dash_length)
         -- guiding line
         for i = 1, flr(length / step) do
             local col = 5
@@ -82,7 +83,11 @@ function draw_crosshair()
             local cur_dy = yn * step * i
             local cur_length = step * i
             if world.player.min_dash_length <= cur_length and cur_length <= world.player.max_dash_length then
-                col = 1
+                local progress = (world.player.cooldown_max_t - world.player.cooldown_t) / world.player.cooldown_max_t
+                local progress_step = flr(progress / 0.25)
+                if progress_step >= i - 1 then
+                    col = 1
+                end
             end
             circfill(world.player.x + cur_dx, world.player.y + cur_dy, 1, col)
         end
