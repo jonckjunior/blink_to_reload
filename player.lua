@@ -199,6 +199,10 @@ function player:take_damage()
 
     self.hp -= 1
     self.i_frames = 30
+
+    if self.hp <= 0 then
+        emit({ type = 'player_death' })
+    end
 end
 
 -- player_shot
