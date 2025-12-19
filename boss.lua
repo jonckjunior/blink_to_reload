@@ -7,22 +7,33 @@ function boss:new()
         y = 80,
         r = 4,
         hp = 3,
-        patterns = {},
+        patterns = {
+            function()
+                return create_bottom_up_horizontal_attack(32)
+            end,
+            function()
+                return create_left_right_vertical_attack(32)
+            end,
+            function()
+                return create_top_down_horizontal_attack(32)
+            end,
+            function()
+                return create_right_left_vertical_attack(32)
+            end
+        },
         current_pattern = nil,
-        pattern_index = 0
+        pattern_index = 1
     }
     return setmetatable(p, boss)
 end
 
 function boss:update()
     if not self.current_pattern then
-        if frame_timer == 0 then
-            -- local attacks = create_vertical_attack(0, 32, 0, 50)
-            self.current_pattern = pattern:new(
-                self,
-                -- create_top_down_horizontal_attack(8)
-                create_left_right_vertical_attack(16)
-            )
+        local attacks = self.patterns[self.pattern_index]()
+        self.current_pattern = pattern:new(attacks)
+        self.pattern_index += 1
+        if self.pattern_index > #self.patterns then
+            self.pattern_index = 1
         end
     else
         self.current_pattern:update()

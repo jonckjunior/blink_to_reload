@@ -2,12 +2,9 @@ pattern = {}
 pattern.__index = pattern
 
 -- a pattern has:
---      * owner: that will be referenced for certain attacks
--- the owner part is not that relevant, I may delete it
 --      * upcoming attacks: a list of attacks.
 -- example usage:
 -- pattern:new(
---     owner = self,
 --     upcoming_attacks = {
 --         ring_attack:new(10, 20, 30, 20, 60),
 --         ring_attack:new(50, 20, 10, 0, 60),
@@ -15,9 +12,8 @@ pattern.__index = pattern
 --     }
 -- )
 
-function pattern:new(owner, upcoming_attacks)
+function pattern:new(upcoming_attacks)
     local p = {
-        owner = owner,
         t = 0,
         attacks = {},
         upcoming_attacks = upcoming_attacks,

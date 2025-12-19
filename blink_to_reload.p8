@@ -62,7 +62,7 @@ function debug()
         print(world.player.hp)
     end
     if world.boss != nil then
-        print(world.boss.hp)
+        print(world.boss.pattern_index)
     end
 end
 
