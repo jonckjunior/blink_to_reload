@@ -77,7 +77,7 @@ function draw_crosshair()
         length = max(length, world.player.min_dash_length)
         length = min(length, world.player.max_dash_length)
         -- guiding line
-        for i = 1, flr(length / step) do
+        for i = 2, flr(length / step) do
             local col = 5
             local cur_dx = xn * step * i
             local cur_dy = yn * step * i

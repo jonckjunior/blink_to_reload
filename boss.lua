@@ -61,4 +61,8 @@ end
 
 function boss:take_damage()
     self.hp -= 1
+
+    if self.hp <= 0 then
+        world.boss = nil
+    end
 end
