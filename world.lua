@@ -5,7 +5,9 @@ function update_world()
     if world.boss then
         world.boss:update()
     end
-    for p in all(world.projectiles) do
+
+    for i = #world.projectiles, 1, -1 do
+        local p = world.projectiles[i]
         p:update()
     end
 end

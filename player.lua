@@ -227,7 +227,7 @@ function player_shot:update()
     self.x += self.dx * 10
     self.y += self.dy * 10
 
-    if abs(self.x) > 140 or abs(self.y) > 140 then
+    if self.x > 140 or self.y > 140 or self.x < -5 or self.y < -5 then
         self:explode()
     end
 end

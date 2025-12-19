@@ -171,41 +171,41 @@ function create_vertical_attack(x, width, start_t, active_t)
     return rectangle_attack:new(x, 0, x + width, 127, start_t, active_t)
 end
 
-function create_top_down_horizontal_attack(width)
+function create_top_down_horizontal_attack(width, active)
     local attacks = {}
     for i = 0, 127, width do
-        local t = flr(i / width) * 30
-        local attack = create_horizontal_attack(i, width - 2, t, 30)
+        local t = flr(i / width) * active
+        local attack = create_horizontal_attack(i, width - 2, t, active)
         add(attacks, attack)
     end
     return attacks
 end
 
-function create_bottom_up_horizontal_attack(width)
+function create_bottom_up_horizontal_attack(width, active)
     local attacks = {}
     for i = 0, 127, width do
-        local t = flr((127 - i) / width) * 30
-        local attack = create_horizontal_attack(i, width - 2, t, 30)
+        local t = flr((127 - i) / width) * active
+        local attack = create_horizontal_attack(i, width - 2, t, active)
         add(attacks, attack)
     end
     return attacks
 end
 
-function create_left_right_vertical_attack(width)
+function create_left_right_vertical_attack(width, active)
     local attacks = {}
     for i = 0, 127, width do
-        local t = flr(i / width) * 30
-        local attack = create_vertical_attack(i, width - 2, t, 30)
+        local t = flr(i / width) * active
+        local attack = create_vertical_attack(i, width - 2, t, active)
         add(attacks, attack)
     end
     return attacks
 end
 
-function create_right_left_vertical_attack(width)
+function create_right_left_vertical_attack(width, active)
     local attacks = {}
     for i = 0, 127, width do
-        local t = flr((127 - i) / width) * 30
-        local attack = create_vertical_attack(i, width - 2, t, 30)
+        local t = flr((127 - i) / width) * active
+        local attack = create_vertical_attack(i, width - 2, t, active)
         add(attacks, attack)
     end
     return attacks

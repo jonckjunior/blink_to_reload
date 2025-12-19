@@ -86,16 +86,16 @@ function offset_attacks(attack_list, offset_frames)
     return attack_list
 end
 
-function sweep_attacks(direction, width)
+function sweep_attacks(direction, width, active)
     local attacks = nil
     if direction == "bottom_up" then
-        attacks = create_bottom_up_horizontal_attack(width)
+        attacks = create_bottom_up_horizontal_attack(width, active)
     elseif direction == "top_down" then
-        attacks = create_top_down_horizontal_attack(width)
+        attacks = create_top_down_horizontal_attack(width, active)
     elseif direction == "left_right" then
-        attacks = create_left_right_vertical_attack(width)
+        attacks = create_left_right_vertical_attack(width, active)
     elseif direction == "right_left" then
-        attacks = create_right_left_vertical_attack(width)
+        attacks = create_right_left_vertical_attack(width, active)
     end
     assert(attacks != nil)
     return attacks

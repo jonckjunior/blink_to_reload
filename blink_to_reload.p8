@@ -26,6 +26,7 @@ function _init()
     }
     telegraph_timer = 30 * 2
     shake = 0
+    debug_list = {}
 
     -- while we don't have a menu
     set_mode("playing")
@@ -37,6 +38,7 @@ function _update()
     end
 
     if mode == "playing" then
+        -- projectiles are being deleted in the update_world which isn't ideal
         update_world()
         update_collisions()
         update_control()
@@ -68,9 +70,13 @@ function _draw()
 end
 
 function debug()
-    if world.boss != nil then
-        print(world.boss.hp)
-        print(world.boss.pattern_index)
+    for d in all(debug_list) do
+        print(d)
+    end
+    debug_list = {}
+    if world.boss then
+        print(world.boss.hp, 2, 2)
+        print(#world.boss.patterns, 2, 8)
     end
 end
 
