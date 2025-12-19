@@ -180,7 +180,6 @@ function player:shoot(tx, ty)
         dx,
         dy
     )
-    add(world.projectiles, ps)
     self.has_ammo = false
 end
 
@@ -202,10 +201,12 @@ function player_shot:new(x, y, dx, dy)
     local ps = {
         x = x,
         y = y,
+        r = 1,
         dx = dx,
         dy = dy
     }
     setmetatable(ps, player_shot)
+    add(world.projectiles, ps)
     return ps
 end
 
@@ -219,5 +220,5 @@ function player_shot:update()
 end
 
 function player_shot:draw()
-    circfill(self.x, self.y, 1, 7)
+    circfill(self.x, self.y, self.r, 7)
 end

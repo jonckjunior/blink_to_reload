@@ -31,11 +31,6 @@ function attack:update()
         self.done = true
     end
 
-    -- if it hits the player, we emit a signal
-    if self:is_active() and world.player != nil and self:check_collision(world.player) then
-        emit({ type = "player_take_damage" })
-    end
-
     -- update the counter
     self.t += 1
 end

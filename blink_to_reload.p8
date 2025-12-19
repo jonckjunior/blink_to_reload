@@ -10,6 +10,7 @@ __lua__
 #include ui.lua
 #include pattern.lua
 #include attack.lua
+#include collisions.lua
 
 function _init()
     -- allows keyboard and mouse
@@ -32,6 +33,7 @@ end
 function _update()
     if mode == "playing" then
         update_world()
+        update_collisions()
         update_control()
     elseif mode == "menu" then
         update_menu()
@@ -56,8 +58,12 @@ function _draw()
 end
 
 function debug()
-    -- if world.player != nil then
-    -- end
+    if world.player != nil then
+        print(world.player.hp)
+    end
+    if world.boss != nil then
+        print(world.boss.hp)
+    end
 end
 
 function set_mode(new_mode)
