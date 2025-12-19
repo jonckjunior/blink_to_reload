@@ -22,8 +22,8 @@ function process_events()
         if event.type == "player_take_damage" and world.player != nil then
             world.player:take_damage()
         end
-        if event.type == "boss_take_damage" and world.player != nil then
-            world.boss:take_damage()
+        if event.type == "boss_hit_by_projectile" and world.player != nil then
+            world.boss:hit_by_projectile(event.projectile)
         end
     end
     events = {}

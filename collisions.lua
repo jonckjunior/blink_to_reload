@@ -14,7 +14,7 @@ function update_collisions()
     if world.boss and world.player and world.projectiles then
         for projectile in all(world.projectiles) do
             if world.boss:check_collision_with_projectile(projectile) then
-                emit({ type = "boss_take_damage" })
+                emit({ type = "boss_hit_by_projectile", projectile = projectile })
             end
         end
     end
@@ -23,7 +23,7 @@ end
 function circle_collision(x0, y0, r0, x1, y1, r1)
     local dx = x0 - x1
     local dy = y0 - y1
-    local length = dx * dx + dy * dy
+    local dist_sq = dx * dx + dy * dy
     local radii = r0 + r1
-    return length * length <= radii * radii
+    return dist_sq <= radii * radii
 end

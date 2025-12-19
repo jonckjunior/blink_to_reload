@@ -51,9 +51,12 @@ function boss:draw()
 end
 
 function boss:check_collision_with_projectile(projectile)
-    local is_colliding = circle_collision(self.x, self.y, self.r, projectile.x, projectile.y, projectile.r)
+    return circle_collision(self.x, self.y, self.r, projectile.x, projectile.y, projectile.r)
+end
 
-    return is_colliding
+function boss:hit_by_projectile(projectile)
+    projectile:explode()
+    self:take_damage()
 end
 
 function boss:take_damage()

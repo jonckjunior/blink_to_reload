@@ -156,7 +156,11 @@ function player:blink(tx, ty)
     local x = self.x + dx * dash_length
     local y = self.y + dy * dash_length
     self:set_movement(x, y)
-    self.reload_t = self.reload_max_t
+
+    if self.has_ammo == false then
+        self.reload_t = self.reload_max_t
+    end
+
     self.cooldown_t = self.cooldown_max_t
     self.i_frames = max(self.i_frames, 5)
 end
@@ -220,10 +224,14 @@ function player_shot:update()
     self.y += self.dy * 10
 
     if abs(self.x) > 140 or abs(self.y) > 140 then
-        del(world.projectiles, self)
+        self:explode()
     end
 end
 
 function player_shot:draw()
     circfill(self.x, self.y, self.r, 7)
+end
+
+function player_shot:explode()
+    del(world.projectiles, self)
 end

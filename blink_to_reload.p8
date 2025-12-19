@@ -58,10 +58,8 @@ function _draw()
 end
 
 function debug()
-    if world.player != nil then
-        print(world.player.hp)
-    end
     if world.boss != nil then
+        print(world.boss.hp)
         print(world.boss.pattern_index)
     end
 end
