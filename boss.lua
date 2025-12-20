@@ -65,31 +65,39 @@ setmetatable(boss_1, { __index = boss })
 function boss_1:new()
     local b = boss.new(self, 30)
     b.patterns = basic_patterns(16, 30)
+    b.extra_patterns = {}
+    b.basic_width = 16
+    b.basic_active = 30
     setmetatable(b, boss_1)
     return b
+end
+
+function boss_1:rebuild_patterns()
+    self.patterns = basic_patterns(self.basic_width, self.basic_active)
+    for f in all(self.extra_patterns) do
+        add(self.patterns, f)
+    end
+    self.pattern_index = #self.patterns
 end
 
 function boss_1:take_damage()
     boss.take_damage(self)
     if self.hp == 20 then
-        self.patterns = basic_patterns(16, 15)
-        self.pattern_index = 1
+        self.basic_active = 15
         add(
-            self.patterns,
-            function()
+            self.extra_patterns, function()
                 return pattern.from_attacks(
                     sweep_attacks("bottom_up", 16, 15), -- Starts immediately
                     offset_attacks(sweep_attacks("top_down", 16, 15), 60) -- Delayed by 2s (60 frames @ 30fps)
                 )
-            end,
-            1
+            end
         )
+        self:rebuild_patterns()
     end
     if self.hp == 10 then
-        self.patterns = basic_patterns(16, 10)
-        self.pattern_index = 1
+        self.basic_active = 10
         add(
-            self.patterns,
+            self.extra_patterns,
             function()
                 -- More complex: Parallel + sequenced combo
                 local parallel_left_right = { sweep_attacks("left_right", 12, 15), sweep_attacks("right_left", 12, 15) }
@@ -97,9 +105,9 @@ function boss_1:take_damage()
                 local follow_up = offset_attacks(sweep_attacks("bottom_up", 16, 15), 90)
                 -- 3s after
                 return pattern.from_attacks(parallel_left_right[1], parallel_left_right[2], follow_up)
-            end,
-            1
+            end
         )
+        self:rebuild_patterns()
     end
 end
 
