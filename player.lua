@@ -16,7 +16,10 @@ function player:new()
         cooldown_t = 0,
         cooldown_max_t = 30, -- 1s, number of frames
         max_dash_length = 50,
-        min_dash_length = 20
+        min_dash_length = 20,
+        shoot_buffer = 0,
+        blink_buffer = 0,
+        buffer_max = 5
     }
     return setmetatable(p, player)
 end
@@ -32,13 +35,10 @@ function player:update()
         end
     end
 
-    if self.cooldown_t > 0 then
-        self.cooldown_t -= 1
-    end
-
-    if self.i_frames > 0 then
-        self.i_frames -= 1
-    end
+    if self.cooldown_t > 0 then self.cooldown_t -= 1 end
+    if self.i_frames > 0 then self.i_frames -= 1 end
+    if self.blink_buffer > 0 then self.blink_buffer -= 1 end
+    if self.shoot_buffer > 0 then self.shoot_buffer -= 1 end
 end
 
 function player:draw()
@@ -131,10 +131,18 @@ function player:check_mouse()
 
     if stat(34) == 1 then
         -- left click, player is shooting
-        emit({ type = "try_shoot", target_x = self.aim_x, target_y = self.aim_y })
+        self.shoot_buffer = self.buffer_max
     elseif stat(34) == 2 then
-        emit({ type = "try_blink", target_x = self.aim_x, target_y = self.aim_y })
         -- right click, player is blinking
+        self.blink_buffer = self.buffer_max
+    end
+
+    if self.shoot_buffer > 0 then
+        emit({ type = "try_shoot", target_x = self.aim_x, target_y = self.aim_y })
+    end
+
+    if self.blink_buffer > 0 then
+        emit({ type = "try_blink", target_x = self.aim_x, target_y = self.aim_y })
     end
 end
 

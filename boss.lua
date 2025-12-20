@@ -37,11 +37,10 @@ function boss:draw()
     if self.current_pattern then
         self.current_pattern:draw()
     end
-    circfill(self.x, self.y, self.r, 8)
 end
 
 function boss:check_collision_with_projectile(projectile)
-    return circle_collision(self.x, self.y, self.r, projectile.x, projectile.y, projectile.r)
+    assert(false)
 end
 
 function boss:hit_by_projectile(projectile)
@@ -64,16 +63,17 @@ setmetatable(boss_1, { __index = boss })
 
 function boss_1:new()
     local b = boss.new(self, 30)
-    b.patterns = basic_patterns(16, 30)
+    b.patterns = self:basic_patterns(16, 30)
     b.extra_patterns = {}
     b.basic_width = 16
     b.basic_active = 30
+    b.spike_angle = 0.25
     setmetatable(b, boss_1)
     return b
 end
 
 function boss_1:rebuild_patterns()
-    self.patterns = basic_patterns(self.basic_width, self.basic_active)
+    self.patterns = self:basic_patterns(self.basic_width, self.basic_active)
     for f in all(self.extra_patterns) do
         add(self.patterns, f)
     end
@@ -111,7 +111,7 @@ function boss_1:take_damage()
     end
 end
 
-function basic_patterns(width, active)
+function boss_1:basic_patterns(width, active)
     return {
         function()
             return pattern.from_attacks(sweep_attacks("bottom_up", width, active))
@@ -126,6 +126,15 @@ function basic_patterns(width, active)
             return pattern.from_attacks(sweep_attacks("right_left", width, active))
         end
     }
+end
+
+function boss_1:draw()
+    boss.draw(self)
+    circfill(self.x, self.y, self.r, 8)
+end
+
+function boss_1:check_collision_with_projectile(projectile)
+    return circle_collision(self.x, self.y, self.r, projectile.x, projectile.y, projectile.r)
 end
 
 -- end of boss 1
