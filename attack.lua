@@ -146,21 +146,15 @@ function rectangle_attack:draw()
 end
 
 function rectangle_attack:check_collision(player)
-    -- rectangle bounds
-    local rx0 = self.x0
-    local ry0 = self.y0
-    local rx1 = self.x1
-    local ry1 = self.y1
-
-    -- clamp player center to rectangle
-    local cx = mid(rx0, player.x, rx1)
-    local cy = mid(ry0, player.y, ry1)
-
-    -- distance from closest point
-    local dx = player.x - cx
-    local dy = player.y - cy
-
-    return dx * dx + dy * dy <= player.r * player.r
+    return square_circle_collision(
+        self.x0,
+        self.y0,
+        self.x1,
+        self.y1,
+        player.x,
+        player.y,
+        player.r
+    )
 end
 
 function create_horizontal_attack(y, width, start_t, active_t)

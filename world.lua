@@ -10,6 +10,11 @@ function update_world()
         local p = world.projectiles[i]
         p:update()
     end
+
+    for i = #world.particles, 1, -1 do
+        local p = world.particles[i]
+        p:update()
+    end
 end
 
 function draw_world()
@@ -20,6 +25,9 @@ function draw_world()
         world.player:draw()
     end
     for p in all(world.projectiles) do
+        p:draw()
+    end
+    for p in all(world.particles) do
         p:draw()
     end
 end

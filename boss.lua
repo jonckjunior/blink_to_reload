@@ -13,12 +13,14 @@ function boss:new(hp)
         max_hp = hp,
         patterns = {},
         current_pattern = nil,
-        pattern_index = 1
+        pattern_index = 1,
+        path = {}
     }
     return setmetatable(p, boss)
 end
 
 function boss:update()
+    self:move_update()
     if not self.current_pattern then
         self.current_pattern = self.patterns[self.pattern_index]()
         self.pattern_index += 1
@@ -39,6 +41,14 @@ function boss:draw()
     end
 end
 
+function boss:move_update()
+    assert(false)
+end
+
+function boss:check_collision_with_player(player)
+    assert(false)
+end
+
 function boss:check_collision_with_projectile(projectile)
     assert(false)
 end
@@ -56,6 +66,41 @@ function boss:take_damage()
     end
 end
 
+-- test_boss for patterns
+test_boss = {}
+test_boss.__index = test_boss
+setmetatable(test_boss, { __index = boss })
+
+function test_boss:new()
+    local b = boss.new(self, 30)
+    b.patterns = {
+        function()
+            return pattern.from_attacks(sweep_attacks("left_right", 12, 15))
+        end
+    }
+    b.r = 5
+    setmetatable(b, test_boss)
+    return b
+end
+
+function boss:move_update()
+    return
+end
+
+function test_boss:check_collision_with_projectile(projectile)
+    return false
+end
+
+function test_boss:check_collision_with_player(player)
+    return false
+end
+
+function test_boss:hit_by_projectile(projectile)
+    return
+end
+
+-- end of test_boss
+
 -- boss 1
 boss_1 = {}
 boss_1.__index = boss_1
@@ -67,7 +112,7 @@ function boss_1:new()
     b.extra_patterns = {}
     b.basic_width = 16
     b.basic_active = 30
-    b.spike_angle = 0.25
+    b.r = 5
     setmetatable(b, boss_1)
     return b
 end
@@ -130,11 +175,75 @@ end
 
 function boss_1:draw()
     boss.draw(self)
+    -- base body
     circfill(self.x, self.y, self.r, 8)
+
+    -- hp visualization
+    local hp_ratio = self.hp / self.max_hp
+    local number_of_rings = flr((1 - hp_ratio) * self.r)
+
+    for i = 1, number_of_rings do
+        circfill(self.x, self.y, i, 7)
+    end
 end
 
 function boss_1:check_collision_with_projectile(projectile)
     return circle_collision(self.x, self.y, self.r, projectile.x, projectile.y, projectile.r)
 end
 
+function boss_1:check_collision_with_player(player)
+    return circle_collision(self.x, self.y, self.r, player.x, player.y, player.r)
+end
+
+function boss_1:move_update()
+    self.y = 64 + sin(frame_timer * 0.015) * 8
+end
+
 -- end of boss 1
+square_boss = {}
+square_boss.__index = square_boss
+setmetatable(square_boss, { __index = boss })
+
+function square_boss:new()
+    local b = boss.new(self, 30)
+    b.patterns = {
+        function()
+            return pattern.from_attacks(sweep_attacks("left_right", 12, 15))
+        end
+    }
+    b.l = 20
+    setmetatable(b, square_boss)
+    return b
+end
+
+function square_boss:move_update()
+    return
+end
+
+function square_boss:check_collision_with_projectile(projectile)
+    return false
+end
+
+function square_boss:check_collision_with_player(player)
+    return square_circle_collision(
+        self.x,
+        self.y,
+        self.x + self.l,
+        self.y + self.l,
+        player.x,
+        player.y,
+        player.r
+    )
+end
+
+function square_boss:hit_by_projectile(projectile)
+    return
+end
+
+function square_boss:draw()
+    boss.draw(self)
+    rectfill(self.x, self.y, self.x + self.l, self.y + self.l, 8)
+    rect(self.x, self.y, self.x + self.l, self.y + self.l, 7)
+end
+-- square_boss
+-- end of square_boss

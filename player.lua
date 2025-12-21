@@ -5,7 +5,7 @@ function player:new()
     local p = {
         i_frames = 0,
         hp = 3,
-        x = 64,
+        x = 30,
         y = 64,
         r = 3,
         aim_x = 64,
@@ -43,6 +43,11 @@ end
 
 function player:draw()
     draw_crosshair()
+
+    -- don't draw the player for a frame
+    if self.i_frames > 0 and self.i_frames % 4 == 0 then
+        return
+    end
 
     if self.has_ammo then
         circfill(self.x, self.y, self.r, 7)
@@ -207,6 +212,8 @@ function player:take_damage()
 
     self.hp -= 1
     self.i_frames = 30
+    shake = 10
+    red_frame = 2
 
     if self.hp <= 0 then
         emit({ type = 'player_death' })
@@ -245,5 +252,9 @@ function player_shot:draw()
 end
 
 function player_shot:explode()
+    particle:new(self.x, self.y, 0, 3)
+    particle:new(self.x - 2, self.y - 3, 2, 2)
+    particle:new(self.x + 2, self.y + 3, 2, 4)
+
     del(world.projectiles, self)
 end

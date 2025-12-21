@@ -1,15 +1,13 @@
 function draw_ui()
     if mode == "playing" then
         -- draw borders
-        line(0, 0, 0, 127, 7)
-        line(0, 0, 127, 0, 7)
-        line(0, 127, 127, 127, 7)
-        line(127, 0, 127, 127, 7)
-
-        -- draw player hp
-        if world.player then
-            draw_player_hp()
-        end
+        local border_col = 7
+        if world.player and world.player.hp == 2 then border_col = 9 end
+        if world.player and world.player.hp == 1 then border_col = 8 end
+        line(0, 0, 0, 127, border_col)
+        line(0, 0, 127, 0, border_col)
+        line(0, 127, 127, 127, border_col)
+        line(127, 0, 127, 127, border_col)
     end
 end
 

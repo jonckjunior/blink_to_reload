@@ -11,6 +11,7 @@ __lua__
 #include pattern.lua
 #include attack.lua
 #include collisions.lua
+#include particle.lua
 
 function _init()
     -- allows keyboard and mouse
@@ -22,11 +23,14 @@ function _init()
     world = {
         player = nil,
         boss = nil,
-        projectiles = {}
+        projectiles = {},
+        particles = {}
     }
     telegraph_timer = 30 * 2
     shake = 0
     debug_list = {}
+    red_frame = 0
+    white_frame = 0
 
     -- while we don't have a menu
     set_mode("playing")
@@ -35,6 +39,12 @@ end
 function _update()
     if shake > 0 then
         shake -= 1
+    end
+    if red_frame > 0 then
+        red_frame -= 1
+    end
+    if white_frame > 0 then
+        white_frame -= 1
     end
 
     if mode == "playing" then
@@ -66,7 +76,9 @@ function _draw()
     end
 
     if transition.active then draw_transition() end
-    debug()
+    if red_frame > 0 then rectfill(0, 0, 127, 127, 8) end
+    if white_frame > 0 then rectfill(0, 0, 127, 127, 6) end
+    -- debug()
 end
 
 function debug()
@@ -95,7 +107,7 @@ function set_mode(new_mode)
         -- Setup menu mode
     elseif mode == "playing" then
         world.player = player:new()
-        world.boss = boss_1:new()
+        world.boss = square_boss:new()
     end
 end
 
