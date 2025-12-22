@@ -40,6 +40,11 @@ function square_boss:new()
     return b
 end
 
+function square_boss:bounds()
+    local h = self.l / 2
+    return self.x - h, self.y - h, self.x + h, self.y + h
+end
+
 function square_boss:move_update()
     -- will be idle for a second
     if self.idle_t > 0 then
@@ -63,10 +68,7 @@ function square_boss:move_update()
 end
 
 function square_boss:check_collision_with_projectile(projectile)
-    local x0 = self.x - self.l / 2
-    local y0 = self.y - self.l / 2
-    local x1 = self.x + self.l / 2
-    local y1 = self.y + self.l / 2
+    local x0, y0, x1, y1 = self:bounds()
     return square_circle_collision(
         x0,
         y0,
@@ -79,10 +81,7 @@ function square_boss:check_collision_with_projectile(projectile)
 end
 
 function square_boss:check_collision_with_player(player)
-    local x0 = self.x - self.l / 2
-    local y0 = self.y - self.l / 2
-    local x1 = self.x + self.l / 2
-    local y1 = self.y + self.l / 2
+    local x0, y0, x1, y1 = self:bounds()
     return square_circle_collision(
         x0,
         y0,
@@ -96,10 +95,7 @@ end
 
 function square_boss:draw()
     boss.draw(self)
-    local x0 = self.x - self.l / 2
-    local y0 = self.y - self.l / 2
-    local x1 = self.x + self.l / 2
-    local y1 = self.y + self.l / 2
+    local x0, y0, x1, y1 = self:bounds()
     rectfill(x0, y0, x1, y1, 8)
     rect(x0, y0, x1, y1, 7)
 end

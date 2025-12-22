@@ -20,7 +20,8 @@ function attack:new(start_t, active_t)
         t = 0,
         active_t = active_t,
         done = false,
-        movement = nil
+        movement = nil,
+        phase = "telegraph"
     }
     setmetatable(a, self)
     return a
@@ -75,12 +76,14 @@ end
 function attack:update()
     self:update_movement()
 
-    -- check if attack is done
-    if self:is_done() then
+    if self.phase == "telegraph" and self.t >= telegraph_timer then
+        self.phase = "active"
+        self.t = 0
+    elseif self.phase == "active" and self.t >= self.active_t then
+        self.phase = "done"
         self.done = true
     end
 
-    -- update the counter
     self.t += 1
 end
 
@@ -91,19 +94,9 @@ function attack:update_movement()
     end
 end
 
-function attack:is_telegraph()
-    return self.t < telegraph_timer
-end
-
-function attack:is_done()
-    return self.t >= telegraph_timer + self.active_t
-end
-
-function attack:is_active()
-    -- check if it's after the telegraphed time but still hasn't passed
-    -- active_t frames after the telegraph
-    return self.t >= telegraph_timer and self.t < telegraph_timer + self.active_t
-end
+function attack:is_telegraph() return self.phase == "telegraph" end
+function attack:is_active() return self.phase == "active" end
+function attack:is_done() return self.phase == "done" end
 
 function attack:start_draw()
     -- this is just to flicker the drawing
