@@ -132,18 +132,15 @@ end
 
 function rect_quadrant(q, delay, duration)
     local x0, y0, x1, y1
+    local quadrants = {
+        tl = { 0, 0, SCREEN.hw, SCREEN.hh },
+        tr = { SCREEN.hw, 0, SCREEN.w, SCREEN.hh },
+        br = { SCREEN.hw, SCREEN.hh, SCREEN.w, SCREEN.h },
+        bl = { 0, SCREEN.hh, SCREEN.hw, SCREEN.h }
+    }
 
-    if q == "tl" then
-        x0, y0, x1, y1 = 0, 0, SCREEN.hw, SCREEN.hh
-    elseif q == "tr" then
-        x0, y0, x1, y1 = SCREEN.hw, 0, SCREEN.w, SCREEN.hh
-    elseif q == "br" then
-        x0, y0, x1, y1 = SCREEN.hw, SCREEN.hh, SCREEN.w, SCREEN.h
-    elseif q == "bl" then
-        x0, y0, x1, y1 = 0, SCREEN.hh, SCREEN.hw, SCREEN.h
-    end
-
-    return rectangle_attack:new(x0, y0, x1, y1, delay, duration)
+    local r = quadrants[q]
+    return rectangle_attack:new(r[1], r[2], r[3], r[4], delay, duration)
 end
 
 function square_halves_horizontal(delay, duration)

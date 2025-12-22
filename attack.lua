@@ -123,10 +123,10 @@ end
 
 -- each attack should implement its own draw and collision checks
 function attack:draw()
-    assert(false)
+    assert(false, "attack:draw not implemented")
 end
 function attack:check_collision(player)
-    assert(false)
+    assert(false, "attack:check_collision not implemented")
 end
 
 function oscillate(axis, amplitude, speed)
