@@ -19,13 +19,62 @@ function attack:new(start_t, active_t)
         start_t = start_t,
         t = 0,
         active_t = active_t,
-        done = false
+        done = false,
+        movement = nil
     }
     setmetatable(a, self)
     return a
 end
 
+function attack:with_movement(movement)
+    assert(movement != nil)
+    self.movement = movement
+    return self
+end
+
+function attack:move_down(dist, speed)
+    return self:with_movement(movement_out_and_back(0, 1, dist, speed))
+end
+
+function attack:move_up(dist, speed)
+    return self:with_movement(movement_out_and_back(0, -1, dist, speed))
+end
+
+function attack:move_right(dist, speed)
+    return self:with_movement(movement_out_and_back(1, 0, dist, speed))
+end
+
+function attack:move_left(dist, speed)
+    return self:with_movement(movement_out_and_back(-1, 0, dist, speed))
+end
+
+function movement_out_and_back(dx, dy, dist, speed)
+    return function(a)
+        if not a._move then
+            a._move = {
+                t = 0,
+                base = {
+                    x0 = a.x0, y0 = a.y0,
+                    x1 = a.x1, y1 = a.y1
+                }
+            }
+        end
+
+        local m = a._move
+        m.t += speed
+
+        local offset = (1 - cos(m.t * 0.1)) / 2 * dist
+
+        a.x0 = m.base.x0 + dx * offset
+        a.y0 = m.base.y0 + dy * offset
+        a.x1 = m.base.x1 + dx * offset
+        a.y1 = m.base.y1 + dy * offset
+    end
+end
+
 function attack:update()
+    self:update_movement()
+
     -- check if attack is done
     if self:is_done() then
         self.done = true
@@ -33,6 +82,13 @@ function attack:update()
 
     -- update the counter
     self.t += 1
+end
+
+-- for attacks that require movement
+function attack:update_movement()
+    if self.movement then
+        self.movement(self)
+    end
 end
 
 function attack:is_telegraph()
@@ -78,6 +134,29 @@ function attack:draw()
 end
 function attack:check_collision(player)
     assert(false)
+end
+
+function oscillate(axis, amplitude, speed)
+    return function(a)
+        if not a.phase then
+            a.phase = 0
+            a.base_x0 = a.x0
+            a.base_x1 = a.x1
+            a.base_y0 = a.y0
+            a.base_y1 = a.y1
+        end
+
+        a.phase += speed
+        local offset = sin(a.phase) * amplitude
+
+        if axis == "y" then
+            a.y0 = a.base_y0 + offset
+            a.y1 = a.base_y1 + offset
+        else
+            a.x0 = a.base_x0 + offset
+            a.x1 = a.base_x1 + offset
+        end
+    end
 end
 
 -- ring attack

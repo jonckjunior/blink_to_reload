@@ -12,10 +12,17 @@ __lua__
 #include attack.lua
 #include collisions.lua
 #include particle.lua
+#include square_boss.lua
 
 function _init()
     -- allows keyboard and mouse
     poke(0x5f2d, 0x1 | 0x2)
+    SCREEN = {
+        w = 127,
+        h = 127,
+        hw = 63.5,
+        hh = 63.5
+    }
 
     frame_timer = 0
     mode = "menu"
@@ -78,7 +85,7 @@ function _draw()
     if transition.active then draw_transition() end
     if red_frame > 0 then rectfill(0, 0, 127, 127, 8) end
     if white_frame > 0 then rectfill(0, 0, 127, 127, 6) end
-    -- debug()
+    debug()
 end
 
 function debug()
@@ -86,10 +93,6 @@ function debug()
         print(d)
     end
     debug_list = {}
-    if world.boss then
-        print(world.boss.hp, 2, 2)
-        print(#world.boss.patterns, 2, 8)
-    end
 end
 
 function set_mode(new_mode)

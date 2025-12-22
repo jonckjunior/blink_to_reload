@@ -43,3 +43,17 @@ function square_circle_collision(x0, y0, x1, y1, x2, y2, r2)
 
     return dx * dx + dy * dy <= r2 * r2
 end
+
+function unitary_vector(px, py)
+    local len = sqrt(px * px + py * py)
+    if len == 0 then
+        return { x = 0, y = 0 }
+    end
+    return { x = px / len, y = py / len }
+end
+
+function point_distance(p0, p1)
+    local dx = p0.x - p1.x
+    local dy = p0.y - p1.y
+    return sqrt(dx * dx + dy * dy)
+end
