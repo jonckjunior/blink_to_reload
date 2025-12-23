@@ -48,12 +48,39 @@ function boss:update()
 end
 
 function boss:draw()
+    local attacks = self:all_attacks()
+
+    -- telegraphs first
+    for a in all(attacks) do
+        if a:is_telegraph() then
+            a:draw()
+        end
+    end
+
+    -- then actives
+    for a in all(attacks) do
+        if a:is_active() then
+            a:draw()
+        end
+    end
+end
+
+function boss:all_attacks()
+    local out = {}
+
     if self.current_pattern then
-        self.current_pattern:draw()
+        for a in all(self.current_pattern.attacks) do
+            add(out, a)
+        end
     end
+
     for p in all(self.special_patterns) do
-        p:draw()
+        for a in all(p.attacks) do
+            add(out, a)
+        end
     end
+
+    return out
 end
 
 function boss:move_update()

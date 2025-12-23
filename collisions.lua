@@ -7,6 +7,13 @@ function update_collisions()
                     emit({ type = "player_take_damage" })
                 end
             end
+            for pat in all(world.boss.special_patterns) do
+                for attack in all(pat.attacks) do
+                    if attack:is_active() and attack:check_collision(world.player) then
+                        emit({ type = "player_take_damage" })
+                    end
+                end
+            end
         end
 
         if world.boss:check_collision_with_player(world.player) then

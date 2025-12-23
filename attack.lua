@@ -21,10 +21,42 @@ function attack:new(start_t, active_t)
         active_t = active_t,
         done = false,
         movement = nil,
+        on_startup = nil,
         phase = "telegraph"
     }
     setmetatable(a, self)
     return a
+end
+
+-- do nothing by default
+function attack:startup()
+    if self.on_startup then
+        self.on_startup(self)
+    end
+end
+
+function attack:with_startup(startup)
+    assert(startup != nil)
+    self.on_startup = startup
+    return self
+end
+
+function attack:on_player()
+    return function(a)
+        if world.player then
+            a.x = world.player.x
+            a.y = world.player.y
+        end
+    end
+end
+
+function attack:on_boss()
+    return function(a)
+        if world.boss then
+            a.x = world.boss.x
+            a.y = world.boss.y
+        end
+    end
 end
 
 function attack:with_movement(movement)
@@ -52,24 +84,23 @@ end
 function movement_out_and_back(dx, dy, dist, speed)
     return function(a)
         if not a._move then
-            a._move = {
-                t = 0,
-                base = {
-                    x0 = a.x0, y0 = a.y0,
-                    x1 = a.x1, y1 = a.y1
-                }
-            }
+            local anchor = { a:get_anchor() }
+            a._move = { t = 0, anchor = anchor }
         end
 
         local m = a._move
         m.t += speed
 
         local offset = (1 - cos(m.t * 0.1)) / 2 * dist
+        local args = {}
+        for v in all(m.anchor) do
+            add(args, v)
+        end
+        add(args, dx * offset)
+        add(args, dy * offset)
 
-        a.x0 = m.base.x0 + dx * offset
-        a.y0 = m.base.y0 + dy * offset
-        a.x1 = m.base.x1 + dx * offset
-        a.y1 = m.base.y1 + dy * offset
+        -- call set_from_anchor with unpacked arguments
+        a:set_from_anchor(unpack(args))
     end
 end
 
@@ -129,29 +160,6 @@ function attack:check_collision(player)
     assert(false, "attack:check_collision not implemented")
 end
 
-function oscillate(axis, amplitude, speed)
-    return function(a)
-        if not a.phase then
-            a.phase = 0
-            a.base_x0 = a.x0
-            a.base_x1 = a.x1
-            a.base_y0 = a.y0
-            a.base_y1 = a.y1
-        end
-
-        a.phase += speed
-        local offset = sin(a.phase) * amplitude
-
-        if axis == "y" then
-            a.y0 = a.base_y0 + offset
-            a.y1 = a.base_y1 + offset
-        else
-            a.x0 = a.base_x0 + offset
-            a.x1 = a.base_x1 + offset
-        end
-    end
-end
-
 -- ring attack
 
 ring_attack = {}
@@ -165,6 +173,15 @@ function ring_attack:new(x, y, r, start_t, active_t)
     ra.y = y
     ra.r = r
     return ra
+end
+
+function ring_attack:get_anchor()
+    return self.x, self.y
+end
+
+function ring_attack:set_from_anchor(ax, ay, dx, dy)
+    self.x = ax + dx
+    self.y = ay + dy
 end
 
 -- same as father
@@ -209,6 +226,18 @@ end
 
 function rectangle_attack:update()
     attack.update(self)
+end
+
+-- rectangle_attack
+function rectangle_attack:get_anchor()
+    return self.x0, self.y0, self.x1, self.y1
+end
+
+function rectangle_attack:set_from_anchor(ax0, ay0, ax1, ay1, dx, dy)
+    self.x0 = ax0 + dx
+    self.y0 = ay0 + dy
+    self.x1 = ax1 + dx
+    self.y1 = ay1 + dy
 end
 
 function rectangle_attack:draw()

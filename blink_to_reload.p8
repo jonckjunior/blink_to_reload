@@ -13,6 +13,7 @@ __lua__
 #include collisions.lua
 #include particle.lua
 #include square_boss.lua
+#include circle_boss.lua
 
 function _init()
     -- allows keyboard and mouse
@@ -110,7 +111,7 @@ function set_mode(new_mode)
         -- Setup menu mode
     elseif mode == "playing" then
         world.player = player:new()
-        world.boss = square_boss:new()
+        world.boss = circle_boss:new()
     end
 end
 

@@ -29,6 +29,8 @@ function pattern:update()
     for i = #self.upcoming_attacks, 1, -1 do
         local attack = self.upcoming_attacks[i]
         if attack.start_t == self.t then
+            -- do any kind of start up necessary for the attack
+            attack:startup()
             add(self.attacks, attack)
             del(self.upcoming_attacks, attack)
         end

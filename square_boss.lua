@@ -12,13 +12,17 @@ function square_boss:new()
             )
         end,
         function()
+            if rnd(1) < 0.5 then
+                return pattern.from_attacks(square_checker(30, 15))
+            else
+                return pattern.from_attacks(inverted_square_checker(30, 15))
+            end
+        end,
+        function()
             return pattern.from_attacks(
                 square_sweep(30, 45),
                 offset_attacks(square_sweep(30, 45), 30 * 3 + 45)
             )
-        end,
-        function()
-            return pattern.from_attacks(square_checker(30, 15))
         end
     }
     b.extra_patterns = {}
@@ -112,10 +116,16 @@ function square_boss:take_damage()
             end
         )
     end
-    if self.hp == 10 then
+    if self.hp == 15 then
         self.special_patterns = {
             pattern.from_attacks(all_corners_increasing_squares(10, 5, 2, 30 * 60 * 5))
         }
+    end
+    if self.hp == 10 then
+        add(
+            self.special_patterns,
+            pattern.from_attacks({ rectangle_attack:new(50, 50, SCREEN.w - 50, SCREEN.h - 50, 30, 30 * 60 * 5) })
+        )
     end
 end
 
