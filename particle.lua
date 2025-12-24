@@ -1,13 +1,15 @@
 particle = {}
 particle.__index = particle
-function particle:new(x, y, start, life)
+function particle:new(x, y, start, life, col)
+    col = col or 7
     local p = {
         x = x,
         y = y,
         r = 0,
         t = 0,
         start_t = start,
-        life = life
+        life = life,
+        col = col
     }
     add(world.particles, p)
     setmetatable(p, particle)
@@ -30,6 +32,6 @@ end
 
 function particle:draw()
     if self.t >= self.start_t then
-        circfill(self.x, self.y, self.r, 7)
+        circfill(self.x, self.y, self.r, self.col)
     end
 end

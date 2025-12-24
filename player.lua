@@ -5,7 +5,7 @@ function player:new()
     local p = {
         i_frames = 0,
         hp = 3,
-        x = 30,
+        x = 64,
         y = 64,
         r = 3,
         aim_x = 64,
@@ -218,6 +218,10 @@ function player:take_damage()
     if self.hp <= 0 then
         emit({ type = 'player_death' })
     end
+end
+
+function player:die()
+    world.player = nil
 end
 
 -- player_shot

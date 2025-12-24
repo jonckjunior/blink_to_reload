@@ -97,10 +97,30 @@ function square_boss:check_collision_with_player(player)
     )
 end
 
-function square_boss:draw()
-    boss.draw(self)
+function square_boss:draw_boss()
     local x0, y0, x1, y1 = self:bounds()
+
+    -- base body
     rectfill(x0, y0, x1, y1, 8)
+
+    -- hp visualization
+    local hp_ratio = self.hp / self.max_hp
+
+    -- maximum number of layers we can draw
+    local max_layers = flr(min(x1 - x0, y1 - y0) / 2)
+
+    local layers = flr((1 - hp_ratio) * max_layers)
+
+    for i = 1, layers do
+        rect(
+            x0 + i,
+            y0 + i,
+            x1 - i,
+            y1 - i,
+            7
+        )
+    end
+
     rect(x0, y0, x1, y1, 7)
 end
 

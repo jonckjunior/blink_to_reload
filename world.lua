@@ -1,4 +1,14 @@
 function update_world()
+    if shake > 0 then
+        shake -= 1
+    end
+    if red_frame > 0 then
+        red_frame -= 1
+    end
+    if white_frame > 0 then
+        white_frame -= 1
+    end
+
     if world.player then
         world.player:update()
     end

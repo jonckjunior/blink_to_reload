@@ -13,20 +13,55 @@ boss.__index = boss
 
 function boss:new(hp)
     local p = {
-        x = 64,
-        y = 80,
+        x = -50,
+        y = -50,
         r = 4,
         hp = hp,
         max_hp = hp,
         patterns = {},
         current_pattern = nil,
         special_patterns = {},
-        pattern_index = 1
+        pattern_index = 1,
+        state = "spawning", -- spawning | intro | active | dead
+        state_t = 0
     }
     return setmetatable(p, boss)
 end
 
 function boss:update()
+    self.state_t += 1
+    if self.state == "spawning" then
+        self:update_spawning()
+        return
+    elseif self.state == "intro" then
+        self:update_intro()
+        return
+    elseif self.state == "active" then
+        self:update_active()
+    end
+end
+
+function boss:update_spawning()
+    -- wait for transition to finish
+    -- if not transition.active then
+    --     self.state = "intro"
+    --     self.state_t = 0
+    -- end
+    self.state = "intro"
+    self.state_t = 0
+end
+
+function boss:update_intro()
+    -- example: small delay or animation
+    if self.state_t > 60 then
+        -- 2 seconds @ 30fps
+        self.state = "active"
+        self.state_t = 0
+        shake = 10
+    end
+end
+
+function boss:update_active()
     self:move_update()
 
     for p in all(self.special_patterns) do
@@ -47,22 +82,35 @@ function boss:update()
     end
 end
 
+function boss:draw_intro()
+end
+
 function boss:draw()
+    if self.state == "spawning" then
+        return
+    end
+
+    if self.state == "intro" then
+        self:draw_intro()
+        return
+    end
+
+    -- active
     local attacks = self:all_attacks()
 
-    -- telegraphs first
     for a in all(attacks) do
-        if a:is_telegraph() then
-            a:draw()
-        end
+        if a:is_telegraph() then a:draw() end
     end
 
-    -- then actives
     for a in all(attacks) do
-        if a:is_active() then
-            a:draw()
-        end
+        if a:is_active() then a:draw() end
     end
+
+    self:draw_boss()
+end
+
+function boss:draw_boss()
+    assert(false)
 end
 
 function boss:all_attacks()
@@ -102,10 +150,17 @@ end
 
 function boss:take_damage()
     self.hp -= 1
-
     if self.hp <= 0 then
-        world.boss = nil
+        emit({ type = "boss_death" })
     end
+end
+
+function boss:die()
+    for i = 1, 50 do
+        local dx, dy = rnd(2) - 1, rnd(2) - 1
+        particle:new(self.x + dx * 10, self.y + dy * 10, i, 3, 8)
+    end
+    world.boss = nil
 end
 
 -- test_boss for patterns

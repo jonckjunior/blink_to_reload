@@ -18,18 +18,11 @@ function circle_boss:new()
     b.extra_patterns = {}
     b.special_patterns = {}
 
-    b.path = {
-        { x = 20, y = 20 },
-        { x = 127 - 20, y = 20 },
-        { x = 127 - 20, y = 127 - 20 },
-        { x = 20, y = 127 - 20 }
-    }
     b.path_idx = 1
     b.idle_time = 30 * 2
     b.idle_t = 0
     b.speed = 1
-    b.x = b.path[1].x
-    b.y = b.path[1].y
+    b.r = 5
     setmetatable(b, circle_boss)
     return b
 end
@@ -49,7 +42,7 @@ function circle_boss:take_damage()
         add(self.special_patterns, pattern.from_attacks({ atk }))
     end
     if self.hp == 15 then
-        add(self.special_patterns, pattern.from_attacks(following_circles(1200, 5, 15)))
+        add(self.special_patterns, pattern.from_attacks(following_circles(1200, 15, 15)))
     end
 end
 
@@ -67,12 +60,19 @@ function circle_boss:check_collision_with_projectile(projectile)
 end
 
 function circle_boss:check_collision_with_player(player)
-    return circle_collision(self.x, self.y, self.r, player.x, player.y, player.r)
+    return circle_collision(self.x, self.y, self.r + 1, player.x, player.y, player.r)
 end
 
-function circle_boss:draw()
-    boss.draw(self)
-    circfill(self.x, self.y, 4, 8)
+function circle_boss:draw_boss()
+    circfill(self.x, self.y, self.r, 8)
+    -- hp visualization
+    local hp_ratio = self.hp / self.max_hp
+    local number_of_rings = flr((1 - hp_ratio) * self.r)
+
+    for i = 1, number_of_rings do
+        circ(self.x, self.y, self.r - i, 7)
+    end
+    circ(self.x, self.y, self.r, 7)
 end
 
 -- patterns
